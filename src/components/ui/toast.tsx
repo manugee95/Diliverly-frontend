@@ -22,10 +22,14 @@ export default function Toast() {
 					<div
 						className={`shrink-0 w-[35px] h-[35px] rounded-full flex items-center justify-center  ${
 							isSuccess ? "bg-[#048F2B30]" : ""
-						} ${isError ? "bg-[#ED3237]" : ""} ${
-							isWarning ? "bg-[#ed9c32]" : ""
+						} ${isError ? "bg-[#ED323730]" : ""} ${
+							isWarning ? "bg-[#ed9c3230]" : ""
 						}`}>
-						<TriangleAlertIcon stroke="#048F2B" />
+						<TriangleAlertIcon
+							stroke={`${isSuccess ? "#048F2B" : ""} ${
+								isError ? "#ED3237" : ""
+							} ${isWarning ? "#ed9c32" : ""}`}
+						/>
 					</div>
 					<div className="grow flex items-center justify-between">
 						<span className="text-sm font-medium">{alert.message}</span>

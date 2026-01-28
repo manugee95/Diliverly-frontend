@@ -7,11 +7,12 @@ import { SocialSignIn } from "./SocialSignIn";
 import { motion } from "motion/react";
 import { Store, Truck, CheckCircle2 } from "lucide-react";
 import * as yup from "yup";
-import { Formik, Form, ErrorMessage, Field } from "formik";
-import { http } from "@/helpers/http";
+import { Formik, Form, ErrorMessage, Field, FormikHelpers } from "formik";
+import { http, HttpError } from "@/helpers/http";
 import { Alert } from "./ui/alert";
 import useAlert from "@/hooks/useAlert";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export const signupSchema = yup.object({
 	firstName: yup.string().trim().required("First name is required"),
@@ -61,7 +62,10 @@ export function SignupForm() {
 		role: "vendor",
 	};
 
-	const handleSubmit = async (values: SignupData) => {
+	const handleSubmit = async (
+		values: SignupData,
+		{ setFieldError }: FormikHelpers<SignupData>
+	) => {
 		try {
 			const res: any = await http.post("/users", values);
 			//console.log(res);
@@ -71,8 +75,15 @@ export function SignupForm() {
 					`/auth/verify-otp?email=${encodeURIComponent(values.email)}`
 				);
 			}, 500);
-		} catch (error) {
-			console.log(error);
+		} catch (error: any) {
+			const err = error as HttpError;
+			showAndHideAlert({ message: err.message, type: "error" });
+			if (err.data && err.data.errors) {
+				Object.keys(err.data.errors).forEach((k) => {
+					setFieldError(k, err.data.errors[k][0]);
+				});
+			}
+			//console.log(err.data);
 		}
 	};
 
@@ -177,7 +188,7 @@ export function SignupForm() {
 
 							{/* Name Fields */}
 							<div className="grid grid-cols-2 gap-4">
-								<div>
+								<div className="flex flex-col gap-y-2 w-full">
 									<Label htmlFor="firstName">First Name</Label>
 									<Input
 										id="firstName"
@@ -193,7 +204,7 @@ export function SignupForm() {
 										className="text-red-500 text-xs"
 									/>
 								</div>
-								<div>
+								<div className="flex flex-col gap-y-2 w-full">
 									<Label htmlFor="lastName">Last Name</Label>
 									<Input
 										id="lastName"
@@ -212,7 +223,7 @@ export function SignupForm() {
 							</div>
 
 							{/* Email */}
-							<div>
+							<div className="flex flex-col gap-y-2 w-full">
 								<Label htmlFor="email">Email Address</Label>
 								<Input
 									id="email"
@@ -230,7 +241,7 @@ export function SignupForm() {
 							</div>
 
 							{/* Phone */}
-							<div>
+							<div className="flex flex-col gap-y-2 w-full">
 								<Label htmlFor="phone">Phone Number</Label>
 								<Input
 									id="phone"
@@ -248,7 +259,7 @@ export function SignupForm() {
 							</div>
 
 							{/* Password */}
-							<div>
+							<div className="flex flex-col gap-y-2 w-full">
 								<Label htmlFor="password">Password</Label>
 								<Input
 									id="password"
@@ -286,9 +297,9 @@ export function SignupForm() {
 				{/* Footer */}
 				<p className="text-center mt-6 text-gray-600">
 					Already have an account?{" "}
-					<a href="#" className="text-blue-600 hover:underline">
+					<Link href="/auth/signin" className="text-blue-600 hover:underline">
 						Sign in
-					</a>
+					</Link>
 				</p>
 			</div>
 		</div>

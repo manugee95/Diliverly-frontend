@@ -131,3 +131,55 @@ export type AgentQuota = {
 	total: number;
 	isPro: boolean;
 };
+
+export type VendorProfile = {
+	businessName: string;
+	address: string;
+};
+
+export type AgentProfile = {
+	businessName: string;
+	businessAddress: string;
+	bio: string;
+	statesCovered: string[];
+};
+
+export type BankDetails = {
+	bankName: string;
+	accountNumber: string;
+	accountName?: string;
+};
+
+export type KYCData = {
+	nin?: string;
+	bvn?: string;
+	cac?: string;
+	facialVerified?: boolean;
+};
+
+export type User = {
+	id: number;
+
+	isAgent: boolean;
+	isVendor: boolean;
+
+	email: string;
+	firstName: string;
+	lastName: string;
+	phone: string;
+
+	status: string; // extend if needed
+
+	profileImageUrl: string | null;
+
+	walletBalance: string; // keep as string if backend sends decimal strings
+
+	verificationCode: string | null;
+	codeExpiresAt: string | null;
+
+	resetCode: string | null;
+	resetCodeExpiresAt: string | null;
+
+	createdAt: string; // ISO date string
+	updatedAt: string; // ISO date string
+};
